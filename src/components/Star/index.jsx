@@ -1,9 +1,11 @@
 import React from "react";
 import "./index.css";
 
-export default function Star({ onRate, full }) {
+export default function Star({ onRate, full, onHoverIn, onHoverOut }) {
+
+
   return (
-    <span className="star" onClick={onRate}>
+    <span className="star" onClick={onRate} onMouseEnter={onHoverIn} onMouseLeave={onHoverOut}>
       {full ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
