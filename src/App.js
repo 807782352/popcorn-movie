@@ -7,7 +7,7 @@ import MovieList from "./components/MovieList";
 import Search from "./components/Search";
 import Logo from "./components/Logo";
 import NumResults from "./components/NumResults";
-import Error from "./components/Error";
+import ErrorMessage from "./components/ErrorMessage";
 
 import { tempWatchedData } from "./data";
 import { tempMovieData } from "./data";
@@ -16,9 +16,8 @@ import Loader from "./components/Loader";
 
 export default function App() {
   const OMDB_API_KEY = process.env.REACT_APP_OMDB_API_KEY;
-  console.log(OMDB_API_KEY);
 
-  const query = "avenger";
+  const query = "avensadsdad";
 
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
@@ -38,11 +37,17 @@ export default function App() {
         }
 
         const data = await res.json();
+
+        console.log(data);
+        if (data.Response === "False") {
+          throw new Error("No movies founded!");
+        }
+
         setMovies(data.Search);
         console.log(data.Search);
-      } catch (error) {
-        console.log(error.message);
-        setError(error.message);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -61,9 +66,9 @@ export default function App() {
       <Main>
         <Box>
           {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
-          {!isLoading && <MovieList movies={movies} />}
-          {isLoading && !error && <Loader />}
-          {error && <Error message={error}/>}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {isLoading && <Loader />}
+          {error && <ErrorMessage message={error} />}
         </Box>
         <Box>
           <WatchedSummary watched={watched} />
