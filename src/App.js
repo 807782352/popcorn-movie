@@ -14,7 +14,8 @@ import { useEffect, useState } from "react";
 import Loader from "./components/Loader";
 
 export default function App() {
-  const OMDB_API_KEY = "1d123736";
+  const OMDB_API_KEY = process.env.REACT_APP_OMDB_API_KEY;
+  console.log(OMDB_API_KEY);
 
   const query = "avenger";
 
