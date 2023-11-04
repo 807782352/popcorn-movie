@@ -10,22 +10,42 @@ import NumResults from "./components/NumResults";
 
 import { tempWatchedData } from "./data";
 import { tempMovieData } from "./data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Loader from "./components/Loader";
 
 export default function App() {
+  const OMDB_API_KEY = "1d123736";
+
+  const query = "avenger";
+
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(function () {
+    async function fetchMovies() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${query}`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+      console.log(data.Search);
+    }
+
+    fetchMovies();
+  }, []);
+
   return (
     <>
       <NavBar>
         <Logo />
         <Search />
-        <NumResults movies={movies}/>
+        <NumResults movies={movies} />
       </NavBar>
       <Main>
-        <Box>
-          <MovieList movies={movies} />
-        </Box>
+        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
