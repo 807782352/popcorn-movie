@@ -17,50 +17,61 @@ import Loader from "./components/Loader";
 export default function App() {
   const OMDB_API_KEY = process.env.REACT_APP_OMDB_API_KEY;
 
-  const query = "avensadsdad";
+  const tempQuery = "avenger";
 
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(function () {
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${query}`
-        );
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${query}`
+          );
 
-        if (!res.ok) {
-          throw new Error("Something went wrong with fetching movies!");
+          if (!res.ok) {
+            throw new Error("Something went wrong with fetching movies!");
+          }
+
+          const data = await res.json();
+
+          console.log(data);
+          if (data.Response === "False") {
+            throw new Error("No movies founded!");
+          }
+
+          setMovies(data.Search);
+          console.log(data.Search);
+        } catch (err) {
+          console.error(err.message);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
         }
-
-        const data = await res.json();
-
-        console.log(data);
-        if (data.Response === "False") {
-          throw new Error("No movies founded!");
-        }
-
-        setMovies(data.Search);
-        console.log(data.Search);
-      } catch (err) {
-        console.error(err.message);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
       }
-    }
 
-    fetchMovies();
-  }, []);
+      if (query.length < 3) {
+        setMovies([]);
+        setError("");
+        return;
+      }
+
+      fetchMovies();
+    },
+    [query]
+  );
 
   return (
     <>
       <NavBar>
         <Logo />
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
       <Main>
