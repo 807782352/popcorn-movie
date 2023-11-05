@@ -13,6 +13,7 @@ import { tempWatchedData } from "./data";
 import { tempMovieData } from "./data";
 import { useEffect, useState } from "react";
 import Loader from "./components/Loader";
+import MovieDetails from "./components/MovieDetails";
 
 export default function App() {
   const OMDB_API_KEY = process.env.REACT_APP_OMDB_API_KEY;
@@ -24,6 +25,12 @@ export default function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [movieId, setMovieId] = useState(null);
+
+
+  function handleOpenMovieDetail(id){
+    setMovieId(selectedId => id === selectedId ? null : id);
+  }
 
   useEffect(
     function () {
@@ -77,13 +84,21 @@ export default function App() {
       <Main>
         <Box>
           {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
-          {!isLoading && !error && <MovieList movies={movies} />}
+          {!isLoading && !error && (
+            <MovieList movies={movies} onOpenMovieDetail={handleOpenMovieDetail} />
+          )}
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
         </Box>
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMovieList watched={watched} />
+          {movieId ? (
+            <MovieDetails movieId={movieId} onCloseMovieDetail={setMovieId}/>
+          ) : (
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedMovieList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
