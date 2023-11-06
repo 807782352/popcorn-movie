@@ -107,6 +107,7 @@ export default function App() {
           {movieId ? (
             <MovieDetails
               movieId={movieId}
+              watched={watched}
               onCloseMovieDetail={handleCloseMovieDetail}
               onAddWatched={handleAddWatched}
             />

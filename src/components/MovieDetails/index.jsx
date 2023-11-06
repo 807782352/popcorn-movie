@@ -6,12 +6,17 @@ export default function MovieDetails({
   movieId,
   onCloseMovieDetail,
   onAddWatched,
+  watched,
 }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
 
   const OMDB_API_KEY = process.env.REACT_APP_OMDB_API_KEY;
+
+  const isWatched = watched.map((movie) => movie.imdbId).includes(movieId);
+
+  const watchedUserRating = watched.find((movie) => movieId === movie.imdbId)?.userRating;
 
   const {
     Title: title,
@@ -86,15 +91,22 @@ export default function MovieDetails({
 
           <section>
             <div className="rating">
-              <StarRating
-                maxRating={10}
-                size={24}
-                onSetRating={setUserRating}
-              />
-              {userRating > 0 && (
-                <button className="btn-add" onClick={handleAdd}>
-                  + Add to list
-                </button>
+              {!isWatched ? (
+                <>
+                  <StarRating
+                    maxRating={10}
+                    size={24}
+                    onSetRating={setUserRating}
+                  />
+
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={handleAdd}>
+                      + Add to list
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p>You have rated this moive already!  <span>⭐</span>{watchedUserRating}</p>
               )}
             </div>
             <p>
