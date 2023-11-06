@@ -27,9 +27,16 @@ export default function App() {
   const [error, setError] = useState("");
   const [movieId, setMovieId] = useState(null);
 
+  function handleOpenMovieDetail(id) {
+    setMovieId((selectedId) => (id === selectedId ? null : id));
+  }
 
-  function handleOpenMovieDetail(id){
-    setMovieId(selectedId => id === selectedId ? null : id);
+  function handleCloseMovieDetail(id) {
+    setMovieId("");
+  }
+
+  function handleAddWatched(movie) {
+    setWatched((watched) => [...watched, movie]);
   }
 
   useEffect(
@@ -82,17 +89,27 @@ export default function App() {
         <NumResults movies={movies} />
       </NavBar>
       <Main>
+        {/* Left box to show all movies by search */}
         <Box>
           {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
           {!isLoading && !error && (
-            <MovieList movies={movies} onOpenMovieDetail={handleOpenMovieDetail} />
+            <MovieList
+              movies={movies}
+              onOpenMovieDetail={handleOpenMovieDetail}
+            />
           )}
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
         </Box>
+
+        {/* Right box to show the movie details */}
         <Box>
           {movieId ? (
-            <MovieDetails movieId={movieId} onCloseMovieDetail={setMovieId}/>
+            <MovieDetails
+              movieId={movieId}
+              onCloseMovieDetail={handleCloseMovieDetail}
+              onAddWatched={handleAddWatched}
+            />
           ) : (
             <>
               <WatchedSummary watched={watched} />
