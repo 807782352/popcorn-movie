@@ -22,10 +22,16 @@ export default function App() {
 
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [movieId, setMovieId] = useState(null);
+
+  // const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(() => {
+    // 如果storedValue为空，也会直接返回空
+    const storedValue = localStorage.getItem("watched");
+    return JSON.parse(storedValue);
+  });
 
   function handleOpenMovieDetail(id) {
     setMovieId((selectedId) => (id === selectedId ? null : id));
@@ -44,6 +50,13 @@ export default function App() {
       watched.filter((movie) => movie.imdbId !== movieId)
     );
   }
+
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  );
 
   useEffect(
     function () {
@@ -70,7 +83,6 @@ export default function App() {
           }
 
           setMovies(data.Search);
-          
         } catch (err) {
           console.error(err.name);
 
