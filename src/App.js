@@ -47,12 +47,15 @@ export default function App() {
 
   useEffect(
     function () {
+      const controller = new AbortController();
+
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${query}`,
+            { signal: controller.signal }
           );
 
           if (!res.ok) {
@@ -65,12 +68,14 @@ export default function App() {
           if (data.Response === "False") {
             throw new Error("No movies founded!");
           }
-
           setMovies(data.Search);
           console.log(data.Search);
         } catch (err) {
-          console.error(err.message);
-          setError(err.message);
+          console.error(err.name);
+
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -83,6 +88,11 @@ export default function App() {
       }
 
       fetchMovies();
+
+      // clean-up function
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
@@ -120,7 +130,10 @@ export default function App() {
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMovieList watched={watched} onDeleteWatched={handleDeleteWatched}/>
+              <WatchedMovieList
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
