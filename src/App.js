@@ -68,8 +68,9 @@ export default function App() {
           if (data.Response === "False") {
             throw new Error("No movies founded!");
           }
+
           setMovies(data.Search);
-          console.log(data.Search);
+          
         } catch (err) {
           console.error(err.name);
 
@@ -87,6 +88,7 @@ export default function App() {
         return;
       }
 
+      handleCloseMovieDetail();
       fetchMovies();
 
       // clean-up function
