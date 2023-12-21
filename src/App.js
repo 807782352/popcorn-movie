@@ -28,8 +28,7 @@ export default function App() {
   const [watched, setWatched] = useState(() => {
     // 如果storedValue为空，也会直接返回空
     const storedValue = localStorage.getItem("watched");
-    console.log(storedValue);
-    return JSON.parse(storedValue);
+    return storedValue ? JSON.parse(storedValue) : [];
   });
 
   function handleOpenMovieDetail(id) {
