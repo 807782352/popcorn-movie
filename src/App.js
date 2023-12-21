@@ -9,8 +9,6 @@ import Logo from "./components/Logo";
 import NumResults from "./components/NumResults";
 import ErrorMessage from "./components/ErrorMessage";
 
-import { tempWatchedData } from "./data";
-import { tempMovieData } from "./data";
 import { useEffect, useState } from "react";
 import Loader from "./components/Loader";
 import MovieDetails from "./components/MovieDetails";
@@ -30,6 +28,7 @@ export default function App() {
   const [watched, setWatched] = useState(() => {
     // 如果storedValue为空，也会直接返回空
     const storedValue = localStorage.getItem("watched");
+    console.log(storedValue);
     return JSON.parse(storedValue);
   });
 
